@@ -1,0 +1,37 @@
+#!/bin/bash
+PWD=`pwd`
+
+if [[ -f "$PWD/blr.log" && -f "$PWD/mum.log" ]]
+ then
+   blr_op=`cat blr.log | grep Operational | wc -l`
+   mum_op=`cat mum.log | grep Operational | wc -l`
+     if [ "$blr_op" -ge 1 ]
+       then
+         X=1
+     else
+         X=0
+     fi
+
+     if [ "$mum_op" -ge 1 ]
+       then
+         Y=1
+     else
+         Y=0
+     fi
+
+## X Y Logic
+   if [[ "$X" -eq 1 && "$Y" -eq 1 ]]
+     then
+       echo "Operational"
+    elif [[ ("$X" -eq 0 && "$Y" -eq 1) || ("$X" -eq 1 && "$Y" -eq 0) ]]
+     then
+       echo "Partial Degraded"
+    elif [[ "$X" -eq 0 && "$Y" -eq 0 ]]
+     then
+       echo "Down"
+   fi
+
+else
+ echo "Bhai..files nahi hai"
+fi
+~

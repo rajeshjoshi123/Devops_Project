@@ -1,0 +1,26 @@
+sms_outgoing () {
+OUT=`curl -i "https://alerts.solutionsinfini.com/members/login"  2>/dev/null | head -n 1 | cut -d$' ' -f2`
+#PING=`ping -i "alerts.solutionsinfini.com"  2>/dev/null | head -n 2 | tail -1 | awk '{print $8}' | sed 's/[a-z,=]*//g'`
+
+if [ "$OUT" -eq "200" ]
+#if [ "$OUT" -eq "200" && "$PING" -le "100" ]
+then
+curl -s $SMS_OUTGOING_URL -H "Authorization: OAuth ef8a45d5-a962-4c2c-a1f4-edbe8d598ebb" -X PATCH -d "component[status]=operational"
+       echo -e "\n"
+
+elif [ "$OUT" -eq "200" && "$PING" -ge "100" ]
+then
+curl -s $SMS_OUTGOING_URL -H "Authorization: OAuth ef8a45d5-a962-4c2c-a1f4-edbe8d598ebb" -X PATCH -d "component[status]=partial_outage"
+       echo -e "\n"
+
+elif [ $OUT -ne "200" && "$PING" -ge "100" ]
+then
+curl -s $SMS_OUTGOING_URL -H "Authorization: OAuth ef8a45d5-a962-4c2c-a1f4-edbe8d598ebb" -X PATCH -d "component[status]=major_outage"
+       echo -e "\n"
+fi
+
+}
+
+
+
+curl -s -w %{time_total}\\n -o /dev/null http://alerts.solutionsinfini.com
